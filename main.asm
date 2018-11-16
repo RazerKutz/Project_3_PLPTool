@@ -3,6 +3,9 @@
 # Initializations
 li $sp, 0x10fffffc
 
+li $t0, 0xf0000000 # 0(CommandBuffer), 4(statusBuffer), 8(reciveBuffer)
+
+li $t9, 0b10 # Bit mask for Status Buffer
 
 # Mask creation:
 #				li $t1, 0b100
@@ -20,24 +23,42 @@ array_ptr:			# Label pointing to 100 word array
 
 
 main:
-	li $s0, array_ptr #Base of pointer.
+# Psudo Code
+# Main Loop
+# if (statusBuffer == 0b11 ) then //Use bit masking here to check if the bit 2^1 is high.
+	# //reciveBuffer has a Character!
+	# Store reciveBuffer Character into array. (sw)
+	# Send reset 0b10 to commandRagister (sw)
+	li $s0, array_ptr # Base of pointer.
+	# li $s1, $s0 # memory for where the the start of the pointer is. May not need this.
+
 	# TODO: write your primary program within this loop
-	# 1. Cheak status buffer to see if there is a Character ready to be
-	# recived.
-	# 2. If there is a Character then retreve it from the revice buffer and
-	# store it in the array
-	# 3. Then send the command buffer a clear command so the UART sends the next
-	# Character.
-	# 4. Loop
+	foo: # Test loop for UART
+		lw $t1, 4($t0)
+		lw $t3, 8($t0)
 
-	# Psudo Code
-	# Main Loop
-	# if (statusBuffer == 0b11 ) then //Use bit masking here to check if the bit 2^1 is high.
-		# //reciveBuffer has a Character!
-		# Store reciveBuffer Character into array. (sw)
-		# Send reset 0b10 to commandRagister (sw)
+		# 1. Cheak status buffer to see if there is a Character ready to be
+		# recived.
+		and $t2, $t1, $t9
 
-
+		# 2. If there is a Character then retreve it from the revice buffer and
+		# store it in the array
+		bne $t2, $0 write_to_array
+		nop
 
 	j main
 	nop
+
+	write_to_array:
+		sw $t3, 0($s0)
+		addiu $s0, $s0, 4
+		j clear_status
+		nop
+
+	clear_status:
+		# 3. Then send the command buffer a clear command so the UART sends the next
+		# Character.
+		sw $t9, 0($t0)
+		# 4. Loop
+		j foo
+		nop
