@@ -23,17 +23,19 @@ array_ptr:			# Label pointing to 100 word array
 
 
 main:
-# Psudo Code
-# Main Loop
-# if (statusBuffer == 0b11 ) then //Use bit masking here to check if the bit 2^1 is high.
-	# //reciveBuffer has a Character!
-	# Store reciveBuffer Character into array. (sw)
-	# Send reset 0b10 to commandRagister (sw)
+
+	# Psudo Code
+	# Main Loop
+	# if (statusBuffer == 0b11 ) then //Use bit masking here to check if the bit 2^1 is high.
+		# //reciveBuffer has a Character!
+		# Store reciveBuffer Character into array. (sw)
+		# Send reset 0b10 to commandRagister (sw)
+
 	li $s0, array_ptr # Base of pointer.
 	# li $s1, $s0 # memory for where the the start of the pointer is. May not need this.
 
 	# TODO: write your primary program within this loop
-	foo: # Test loop for UART
+	read_UART: # Test loop for UART
 		lw $t1, 4($t0)
 		lw $t3, 8($t0)
 
@@ -60,5 +62,5 @@ main:
 		# Character.
 		sw $t9, 0($t0)
 		# 4. Loop
-		j foo
+		j read_UART
 		nop
