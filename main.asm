@@ -18,10 +18,13 @@ array_ptr:			# Label pointing to 100 word array
 
 main:
 	# TODO: write your primary program within this loop
-	# 1. Get the cheak status buffer to see if there is a char to recive.
-	# 2. If there is a Character then retreve the data in the revice buffer
-	# 3. then send the command buffer a clear buffer command.
+	# 1. Get the cheak status buffer to see if there is a char ready to be
+	# recived.
+	# 2. If there is a Character then retreve it from the revice buffer and
+	# store it in the array
+	# 3. Then send the command buffer a clear command so the UART sends the next
+	# Character.
+	# 4. Loop
 
-	# I will also need
 	j main
 	nop
