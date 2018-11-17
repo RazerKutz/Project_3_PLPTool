@@ -4,6 +4,7 @@
 li $sp, 0x10fffffc
 
 li $t0, 0xf0000000 # 0(CommandBuffer), 4(statusBuffer), 8(reciveBuffer)
+li $t5, 0b1000000 # Bit mask to Cheak Upper.
 
 li $t9, 0b10 # Bit mask for Status Buffer
 
@@ -37,7 +38,6 @@ main:
 	# TODO: write your primary program within this loop
 	read_UART: # Test loop for UART
 		lw $t1, 4($t0)
-		lw $t3, 8($t0)
 
 		# 1. Cheak status buffer to see if there is a Character ready to be
 		# recived.
@@ -45,11 +45,24 @@ main:
 
 		# 2. If there is a Character then retreve it from the revice buffer and
 		# store it in the array
-		bne $t2, $0 write_to_array
+		bne $t2, $0 receive_character
 		nop
 
 	j main
 	nop
+
+	receive_character:
+		lw $t3, 8($t0) # $t3 holds the actual Character.
+		and $t2, $t3, $t5
+		bne $t2, $0 convert_to_lower
+		nop
+		j write_to_array
+		nop
+
+	convert_to_lower:
+		addiu $t3, $t3, 32
+		j write_to_array
+		nop
 
 	write_to_array:
 		sw $t3, 0($s0)
