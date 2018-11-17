@@ -4,7 +4,7 @@
 li $sp, 0x10fffffc
 
 li $t0, 0xf0000000 # 0(CommandBuffer), 4(statusBuffer), 8(reciveBuffer)
-li $t5, 0b0010000 # Bit mask to Cheak Upper.
+li $t5, 0b0100000 # Bit mask to Cheak Upper.
 
 li $t9, 0b10 # Bit mask for Status Buffer
 
@@ -54,7 +54,7 @@ main:
 	receive_character:
 		lw $t3, 8($t0) # $t3 holds the actual Character.
 		and $t2, $t3, $t5 # using masking to see if its upper case letter.
-		beq $t2, $t5 clear_status # If upper case convert to lower.
+		beq $t2, $0 convert_to_lower # If upper case convert to lower.
 		nop
 		j write_to_array
 		nop
